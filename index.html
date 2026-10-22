@@ -1,0 +1,1123 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pet | Sistema de Gerenciamento</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f6f5;
+            color: #263b39;
+        }
+
+        [hidden] { display: none !important; }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button {
+            background: #19796d;
+            color: white;
+            border: 0;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 3px;
+        }
+
+        button:hover { background: #125c53; }
+
+        button.secundario {
+            background: #e2ece9;
+            color: #234c45;
+        }
+
+        button.perigo { background: #b93838; }
+        button.perigo:hover { background: #922727; }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd8d5;
+            border-radius: 6px;
+            background: white;
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 5px;
+            font-weight: bold;
+        }
+
+        a { color: #19796d; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .login {
+            max-width: 430px;
+            width: 92%;
+            margin: 45px auto;
+            padding: 28px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px #00000012;
+        }
+
+        .login h1, .login h2 {
+            text-align: center;
+            color: #19796d;
+        }
+
+        .login p { text-align: center; }
+
+        .login button[type="submit"] {
+            width: 100%;
+            margin-top: 18px;
+        }
+
+        header {
+            background: #19796d;
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        header h1 { margin: 0; font-size: 25px; }
+
+        header button {
+            background: white;
+            color: #19796d;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 12px 5%;
+            background: white;
+            border-bottom: 1px solid #d9e5e2;
+        }
+
+        nav a {
+            padding: 10px 13px;
+            border-radius: 6px;
+        }
+
+        nav a.ativo, nav a:hover {
+            background: #dcefeb;
+            text-decoration: none;
+        }
+
+        main { padding: 25px 5%; }
+
+        .painel {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px #00000008;
+        }
+
+        .cartoes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .cartao {
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            border-left: 5px solid #19796d;
+            box-shadow: 0 2px 10px #0000000c;
+        }
+
+        .cartao h3 { margin-top: 0; color: #19796d; }
+        .numero { font-size: 28px; font-weight: bold; }
+
+        .barra-pesquisa {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .barra-pesquisa input { flex: 1; min-width: 100px; }
+        .barra-pesquisa button { white-space: nowrap; }
+
+        .tabela-container { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 12px;
+        }
+
+        th, td {
+            padding: 11px;
+            text-align: left;
+            border-bottom: 1px solid #e0e9e6;
+        }
+
+        th {
+            background: #e3f0ed;
+            color: #234c45;
+        }
+
+        td button { white-space: nowrap; }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px 15px;
+            margin: 18px 0;
+        }
+
+        .campo { min-width: 0; }
+        .campo label { margin-top: 0; }
+
+        .acoes-formulario {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .mensagem {
+            margin: 14px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #e3f4ed;
+            color: #176044;
+        }
+
+        .aviso {
+            background: #fff4d9;
+            color: #775619;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #647773;
+        }
+
+        @media (max-width: 600px) {
+            header { align-items: flex-start; }
+            nav { flex-direction: column; }
+            main { padding: 15px 3%; }
+            .painel { padding: 15px; }
+            .barra-pesquisa { flex-wrap: wrap; }
+            .barra-pesquisa input { flex-basis: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN -->
+    <section id="telaLogin" class="login">
+        <h1>🐾 Hotel Pet</h1>
+        <p>Bem-vindo ao nosso sistema!</p>
+
+        <form id="formLogin">
+            <label for="emailLogin">E-mail</label>
+            <input type="email" id="emailLogin" required
+                   placeholder="Digite seu e-mail">
+
+            <label for="senhaLogin">Senha</label>
+            <input type="password" id="senhaLogin" required
+                   placeholder="Digite sua senha">
+
+            <button type="submit">Entrar</button>
+        </form>
+
+        <p><a href="#" id="linkRecuperar">Esqueci minha senha</a></p>
+        <p>Não tem uma conta? <a href="#" id="linkCadastro">Criar conta</a></p>
+        <p class="aviso">Projeto acadêmico: o login é demonstrativo.</p>
+    </section>
+
+    <!-- CADASTRO -->
+    <section id="telaCadastro" class="login" hidden>
+        <h2>Criar conta</h2>
+
+        <form id="formCadastro">
+            <label for="cadNome">Nome completo</label>
+            <input id="cadNome" required>
+
+            <label for="cadEmail">E-mail</label>
+            <input type="email" id="cadEmail" required>
+
+            <label for="cadTelefone">Telefone</label>
+            <input id="cadTelefone" required>
+
+            <label for="cadSenha">Senha</label>
+            <input type="password" id="cadSenha" minlength="4" required>
+
+            <button type="submit">Cadastrar</button>
+        </form>
+
+        <p id="mensagemCadastro" class="mensagem" hidden></p>
+        <p><a href="#" class="voltarLogin">Voltar ao login</a></p>
+    </section>
+
+    <!-- RECUPERAÇÃO DE SENHA -->
+    <section id="telaRecuperacao" class="login" hidden>
+        <h2>Esqueci minha senha</h2>
+        <p>Informe seu e-mail para solicitar a recuperação.</p>
+
+        <form id="formRecuperacao">
+            <label for="emailRecuperacao">E-mail</label>
+            <input type="email" id="emailRecuperacao" required>
+
+            <button type="submit">Solicitar recuperação</button>
+        </form>
+
+        <p id="mensagemRecuperacao" class="mensagem" hidden></p>
+        <p><a href="#" class="voltarLogin">Voltar ao login</a></p>
+    </section>
+
+    <!-- SISTEMA -->
+    <div id="sistema" hidden>
+        <header>
+            <h1>🐾 Hotel Pet</h1>
+            <div>
+                <span>Área do gerente</span>
+                <button id="btnSair">Sair</button>
+            </div>
+        </header>
+
+        <!-- MENU -->
+        <nav>
+            <a href="#" data-pagina="inicio" class="ativo">Início</a>
+            <a href="#" data-pagina="reservas">Reservas</a>
+            <a href="#" data-pagina="pets">Pets</a>
+            <a href="#" data-pagina="usuarios">Usuários</a>
+            <a href="#" data-pagina="configuracoes">Configurações</a>
+        </nav>
+
+        <main>
+            <!-- INÍCIO -->
+            <section id="pagina-inicio">
+                <h2>Painel do gerente</h2>
+                <p>Gerencie as reservas, os pets, os usuários e as configurações do Hotel Pet.</p>
+
+                <div class="cartoes">
+                    <div class="cartao">
+                        <h3>Reservas</h3>
+                        <p class="numero" id="totalReservas">0</p>
+                        <button data-ir="reservas">Ir para reservas</button>
+                    </div>
+
+                    <div class="cartao">
+                        <h3>Pets</h3>
+                        <p class="numero" id="totalPets">0</p>
+                        <button data-ir="pets">Ir para pets</button>
+                    </div>
+
+                    <div class="cartao">
+                        <h3>Usuários</h3>
+                        <p class="numero" id="totalUsuarios">0</p>
+                        <button data-ir="usuarios">Ir para usuários</button>
+                    </div>
+
+                    <div class="cartao">
+                        <h3>Configurações</h3>
+                        <p>Diária: <strong id="resumoDiaria">R$ 50,00</strong></p>
+                        <p>Vagas: <strong id="resumoVagas">10</strong></p>
+                        <button data-ir="configuracoes">Abrir configurações</button>
+                    </div>
+                </div>
+
+                <div class="painel">
+                    <h3>Acesso rápido</h3>
+                    <button data-ir="reservas">Consultar reservas</button>
+                    <button data-ir="pets">Pesquisar pets</button>
+                    <button data-ir="usuarios">Gerenciar usuários</button>
+                </div>
+            </section>
+
+            <!-- RESERVAS -->
+            <section id="pagina-reservas" hidden>
+                <div class="painel">
+                    <h2>Gerenciamento de reservas</h2>
+                    <p>Pesquise, cadastre e atualize as reservas.</p>
+
+                    <div class="barra-pesquisa">
+                        <input type="search" id="buscaReserva"
+                               placeholder="Pesquisar cliente, pet ou status">
+                        <button id="btnPesquisarReserva">Pesquisar</button>
+                        <button class="secundario" data-limpar="buscaReserva">Limpar</button>
+                    </div>
+
+                    <h3 id="tituloFormularioReserva">Cadastrar reserva</h3>
+
+                    <form id="formReserva" class="formulario">
+                        <input type="hidden" id="reservaId">
+
+                        <div class="campo">
+                            <label for="resCliente">Nome do cliente</label>
+                            <input id="resCliente" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="resPet">Nome do pet</label>
+                            <input id="resPet" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="resEntrada">Data de entrada</label>
+                            <input type="date" id="resEntrada" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="resSaida">Data de saída</label>
+                            <input type="date" id="resSaida" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="resStatus">Status</label>
+                            <select id="resStatus">
+                                <option>Pendente</option>
+                                <option>Confirmada</option>
+                                <option>Em andamento</option>
+                                <option>Concluída</option>
+                                <option>Cancelada</option>
+                            </select>
+                        </div>
+
+                        <div class="acoes-formulario">
+                            <button type="submit" id="btnSalvarReserva">Salvar reserva</button>
+                            <button type="button" class="secundario" id="btnCancelarEdicaoReserva" hidden>Cancelar edição</button>
+                        </div>
+                    </form>
+
+                    <p id="mensagemReserva" class="mensagem" hidden></p>
+
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Pet</th>
+                                    <th>Entrada</th>
+                                    <th>Saída</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaReservas"></tbody>
+                        </table>
+                    </div>
+
+                    <button class="voltarInicio">Voltar ao início</button>
+                </div>
+            </section>
+
+            <!-- PETS -->
+            <section id="pagina-pets" hidden>
+                <div class="painel">
+                    <h2>Gerenciamento de pets</h2>
+
+                    <div class="barra-pesquisa">
+                        <input type="search" id="buscaPet"
+                               placeholder="Pesquisar nome, espécie ou tutor">
+                        <button id="btnPesquisarPet">Pesquisar</button>
+                        <button class="secundario" data-limpar="buscaPet">Limpar</button>
+                    </div>
+
+                    <h3 id="tituloFormularioPet">Cadastrar pet</h3>
+
+                    <form id="formPet" class="formulario">
+                        <input type="hidden" id="petId">
+
+                        <div class="campo">
+                            <label for="petNome">Nome do pet</label>
+                            <input id="petNome" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="petEspecie">Espécie</label>
+                            <select id="petEspecie">
+                                <option>Cachorro</option>
+                                <option>Gato</option>
+                                <option>Outro</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="petRaca">Raça</label>
+                            <input id="petRaca" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="petTutor">Nome do tutor</label>
+                            <input id="petTutor" required>
+                        </div>
+
+                        <div class="acoes-formulario">
+                            <button type="submit">Salvar pet</button>
+                            <button type="button" class="secundario" id="btnCancelarEdicaoPet" hidden>Cancelar edição</button>
+                        </div>
+                    </form>
+
+                    <p id="mensagemPet" class="mensagem" hidden></p>
+
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Espécie</th>
+                                    <th>Raça</th>
+                                    <th>Tutor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaPets"></tbody>
+                        </table>
+                    </div>
+
+                    <button class="voltarInicio">Voltar ao início</button>
+                </div>
+            </section>
+
+            <!-- USUÁRIOS -->
+            <section id="pagina-usuarios" hidden>
+                <div class="painel">
+                    <h2>Gerenciamento de usuários</h2>
+
+                    <div class="barra-pesquisa">
+                        <input type="search" id="buscaUsuario"
+                               placeholder="Pesquisar nome, e-mail ou tipo">
+                        <button id="btnPesquisarUsuario">Pesquisar</button>
+                        <button class="secundario" data-limpar="buscaUsuario">Limpar</button>
+                    </div>
+
+                    <h3 id="tituloFormularioUsuario">Cadastrar usuário</h3>
+
+                    <form id="formUsuario" class="formulario">
+                        <input type="hidden" id="usuarioId">
+
+                        <div class="campo">
+                            <label for="usuarioNome">Nome completo</label>
+                            <input id="usuarioNome" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="usuarioEmail">E-mail</label>
+                            <input type="email" id="usuarioEmail" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="usuarioTelefone">Telefone</label>
+                            <input id="usuarioTelefone" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="usuarioTipo">Tipo de usuário</label>
+                            <select id="usuarioTipo">
+                                <option>Cliente</option>
+                                <option>Funcionário</option>
+                                <option>Gerente</option>
+                            </select>
+                        </div>
+
+                        <div class="acoes-formulario">
+                            <button type="submit">Salvar usuário</button>
+                            <button type="button" class="secundario" id="btnCancelarEdicaoUsuario" hidden>Cancelar edição</button>
+                        </div>
+                    </form>
+
+                    <p id="mensagemUsuario" class="mensagem" hidden></p>
+
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Telefone</th>
+                                    <th>Tipo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaUsuarios"></tbody>
+                        </table>
+                    </div>
+
+                    <button class="voltarInicio">Voltar ao início</button>
+                </div>
+            </section>
+
+            <!-- CONFIGURAÇÕES -->
+            <section id="pagina-configuracoes" hidden>
+                <div class="painel">
+                    <h2>Configurações do Hotel Pet</h2>
+                    <p>Altere os valores das diárias e a quantidade de vagas.</p>
+
+                    <form id="formConfiguracoes" class="formulario">
+                        <div class="campo">
+                            <label for="valorDiaria">Valor da diária (R$)</label>
+                            <input type="number" id="valorDiaria"
+                                   min="0" step="0.01" value="50" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="quantidadeVagas">Quantidade de vagas</label>
+                            <input type="number" id="quantidadeVagas"
+                                   min="0" step="1" value="10" required>
+                        </div>
+
+                        <div class="acoes-formulario">
+                            <button type="submit">Salvar configurações</button>
+                        </div>
+                    </form>
+
+                    <p id="mensagemConfiguracoes" class="mensagem" hidden></p>
+                    <button class="voltarInicio">Voltar ao início</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>Hotel Pet - Sistema de gerenciamento</footer>
+    </div>
+
+    <script>
+        // Dados de demonstração
+        let reservas = [
+            { id: 1, cliente: "Maria Silva", pet: "Rex", entrada: "2026-10-25", saida: "2026-10-27", status: "Pendente" },
+            { id: 2, cliente: "João Santos", pet: "Mel", entrada: "2026-10-26", saida: "2026-10-28", status: "Confirmada" },
+            { id: 3, cliente: "Pedro Souza", pet: "Thor", entrada: "2026-10-27", saida: "2026-10-29", status: "Em andamento" }
+        ];
+
+        let pets = [
+            { id: 1, nome: "Rex", especie: "Cachorro", raca: "Labrador", tutor: "Maria Silva" },
+            { id: 2, nome: "Mel", especie: "Cachorro", raca: "Poodle", tutor: "João Santos" },
+            { id: 3, nome: "Thor", especie: "Cachorro", raca: "Vira-lata", tutor: "Pedro Souza" }
+        ];
+
+        let usuarios = [
+            { id: 1, nome: "Maria Silva", email: "maria@email.com", telefone: "77999990001", tipo: "Cliente" },
+            { id: 2, nome: "João Santos", email: "joao@email.com", telefone: "77999990002", tipo: "Funcionário" },
+            { id: 3, nome: "Gerente do Hotel", email: "gerente@hotelpet.com", telefone: "77999990003", tipo: "Gerente" }
+        ];
+
+        let proximoIdReserva = 4;
+        let proximoIdPet = 4;
+        let proximoIdUsuario = 4;
+
+        let diaria = 50;
+        let vagas = 10;
+
+        const $ = id => document.getElementById(id);
+
+        // Troca de telas
+        function mostrarTela(nome) {
+            $("telaLogin").hidden = nome !== "login";
+            $("telaCadastro").hidden = nome !== "cadastro";
+            $("telaRecuperacao").hidden = nome !== "recuperacao";
+            $("sistema").hidden = nome !== "sistema";
+            window.scrollTo(0, 0);
+        }
+
+        $("linkCadastro").addEventListener("click", event => {
+            event.preventDefault();
+            mostrarTela("cadastro");
+        });
+
+        $("linkRecuperar").addEventListener("click", event => {
+            event.preventDefault();
+            mostrarTela("recuperacao");
+        });
+
+        document.querySelectorAll(".voltarLogin").forEach(link => {
+            link.addEventListener("click", event => {
+                event.preventDefault();
+                mostrarTela("login");
+            });
+        });
+
+        $("formLogin").addEventListener("submit", event => {
+            event.preventDefault();
+            mostrarTela("sistema");
+            abrirPagina("inicio");
+            atualizarResumo();
+        });
+
+        $("formCadastro").addEventListener("submit", event => {
+            event.preventDefault();
+            $("mensagemCadastro").textContent =
+                "Cadastro demonstrativo realizado. Os dados não foram salvos.";
+            $("mensagemCadastro").hidden = false;
+        });
+
+        $("formRecuperacao").addEventListener("submit", event => {
+            event.preventDefault();
+            $("mensagemRecuperacao").textContent =
+                "Solicitação demonstrativa. Nenhum e-mail foi enviado.";
+            $("mensagemRecuperacao").hidden = false;
+        });
+
+        $("btnSair").addEventListener("click", () => {
+            $("formLogin").reset();
+            mostrarTela("login");
+        });
+
+        // Navegação do menu
+        function abrirPagina(nome) {
+            document.querySelectorAll("main > section").forEach(pagina => {
+                pagina.hidden = pagina.id !== "pagina-" + nome;
+            });
+
+            document.querySelectorAll("nav a[data-pagina]").forEach(link => {
+                link.classList.toggle("ativo", link.dataset.pagina === nome);
+            });
+
+            window.scrollTo(0, 0);
+        }
+
+        document.querySelectorAll("nav a[data-pagina]").forEach(link => {
+            link.addEventListener("click", event => {
+                event.preventDefault();
+                abrirPagina(link.dataset.pagina);
+            });
+        });
+
+        document.querySelectorAll("[data-ir]").forEach(botao => {
+            botao.addEventListener("click", () => abrirPagina(botao.dataset.ir));
+        });
+
+        document.querySelectorAll(".voltarInicio").forEach(botao => {
+            botao.addEventListener("click", () => abrirPagina("inicio"));
+        });
+
+        // Mensagens de cada página
+        function mostrarMensagem(id, texto) {
+            $(id).textContent = texto;
+            $(id).hidden = false;
+        }
+
+        function escapar(texto) {
+            return String(texto).replace(/[&<>"']/g, caractere => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[caractere]);
+        }
+
+        function dataBrasileira(data) {
+            if (!data) return "";
+            const partes = data.split("-");
+            return partes.length === 3
+                ? partes[2] + "/" + partes[1] + "/" + partes[0]
+                : data;
+        }
+
+        function atualizarResumo() {
+            $("totalReservas").textContent = reservas.length;
+            $("totalPets").textContent = pets.length;
+            $("totalUsuarios").textContent = usuarios.length;
+            $("resumoDiaria").textContent = diaria.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            });
+            $("resumoVagas").textContent = vagas;
+        }
+
+        // RESERVAS
+        function renderizarReservas(filtro = "") {
+            const tbody = $("tabelaReservas");
+            const termo = filtro.toLowerCase();
+
+            const lista = reservas.filter(r =>
+                [r.cliente, r.pet, r.status].some(valor =>
+                    valor.toLowerCase().includes(termo)
+                )
+            );
+
+            tbody.innerHTML = lista.map(r => `
+                <tr>
+                    <td>${escapar(r.cliente)}</td>
+                    <td>${escapar(r.pet)}</td>
+                    <td>${dataBrasileira(r.entrada)}</td>
+                    <td>${dataBrasileira(r.saida)}</td>
+                    <td>${escapar(r.status)}</td>
+                    <td>
+                        <button data-acao="confirmar-reserva" data-id="${r.id}">Confirmar</button>
+                        <button class="secundario" data-acao="editar-reserva" data-id="${r.id}">Editar</button>
+                        <button class="perigo" data-acao="cancelar-reserva" data-id="${r.id}">Cancelar</button>
+                    </td>
+                </tr>
+            `).join("");
+
+            if (!lista.length) {
+                tbody.innerHTML = '<tr><td colspan="6">Nenhuma reserva encontrada.</td></tr>';
+            }
+
+            atualizarResumo();
+        }
+
+        $("btnPesquisarReserva").addEventListener("click", () => {
+            renderizarReservas($("buscaReserva").value);
+            mostrarMensagem("mensagemReserva", "Pesquisa de reservas concluída.");
+        });
+
+        $("buscaReserva").addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                $("btnPesquisarReserva").click();
+            }
+        });
+
+        $("formReserva").addEventListener("submit", event => {
+            event.preventDefault();
+
+            const id = $("reservaId").value;
+            const entrada = $("resEntrada").value;
+            const saida = $("resSaida").value;
+
+            if (saida < entrada) {
+                mostrarMensagem("mensagemReserva", "A saída não pode ser anterior à entrada.");
+                return;
+            }
+
+            const dados = {
+                cliente: $("resCliente").value.trim(),
+                pet: $("resPet").value.trim(),
+                entrada,
+                saida,
+                status: $("resStatus").value
+            };
+
+            if (id) {
+                const indice = reservas.findIndex(r => r.id === Number(id));
+                if (indice !== -1) reservas[indice] = { ...reservas[indice], ...dados };
+                mostrarMensagem("mensagemReserva", "Reserva atualizada!");
+            } else {
+                reservas.push({ id: proximoIdReserva++, ...dados });
+                mostrarMensagem("mensagemReserva", "Reserva cadastrada!");
+            }
+
+            $("formReserva").reset();
+            $("reservaId").value = "";
+            $("tituloFormularioReserva").textContent = "Cadastrar reserva";
+            $("btnSalvarReserva").textContent = "Salvar reserva";
+            $("btnCancelarEdicaoReserva").hidden = true;
+
+            renderizarReservas($("buscaReserva").value);
+        });
+
+        $("tabelaReservas").addEventListener("click", event => {
+            const botao = event.target.closest("button[data-acao]");
+            if (!botao) return;
+
+            const id = Number(botao.dataset.id);
+            const reserva = reservas.find(r => r.id === id);
+            if (!reserva) return;
+
+            if (botao.dataset.acao === "confirmar-reserva") {
+                reserva.status = "Confirmada";
+                renderizarReservas($("buscaReserva").value);
+                mostrarMensagem("mensagemReserva", "Reserva de " + reserva.cliente + " confirmada!");
+            }
+
+            if (botao.dataset.acao === "editar-reserva") {
+                $("reservaId").value = reserva.id;
+                $("resCliente").value = reserva.cliente;
+                $("resPet").value = reserva.pet;
+                $("resEntrada").value = reserva.entrada;
+                $("resSaida").value = reserva.saida;
+                $("resStatus").value = reserva.status;
+                $("tituloFormularioReserva").textContent = "Editar reserva";
+                $("btnSalvarReserva").textContent = "Salvar alterações";
+                $("btnCancelarEdicaoReserva").hidden = false;
+                $("formReserva").scrollIntoView({ behavior: "smooth" });
+            }
+
+            if (botao.dataset.acao === "cancelar-reserva") {
+                if (confirm("Deseja cancelar esta reserva?")) {
+                    reserva.status = "Cancelada";
+                    renderizarReservas($("buscaReserva").value);
+                    mostrarMensagem("mensagemReserva", "Reserva cancelada.");
+                }
+            }
+        });
+
+        $("btnCancelarEdicaoReserva").addEventListener("click", () => {
+            $("formReserva").reset();
+            $("reservaId").value = "";
+            $("tituloFormularioReserva").textContent = "Cadastrar reserva";
+            $("btnSalvarReserva").textContent = "Salvar reserva";
+            $("btnCancelarEdicaoReserva").hidden = true;
+        });
+
+        // PETS
+        function renderizarPets(filtro = "") {
+            const tbody = $("tabelaPets");
+            const termo = filtro.toLowerCase();
+
+            const lista = pets.filter(p =>
+                [p.nome, p.especie, p.raca, p.tutor].some(valor =>
+                    valor.toLowerCase().includes(termo)
+                )
+            );
+
+            tbody.innerHTML = lista.map(p => `
+                <tr>
+                    <td>${escapar(p.nome)}</td>
+                    <td>${escapar(p.especie)}</td>
+                    <td>${escapar(p.raca)}</td>
+                    <td>${escapar(p.tutor)}</td>
+                    <td>
+                        <button class="secundario" data-acao="editar-pet" data-id="${p.id}">Editar</button>
+                        <button class="perigo" data-acao="excluir-pet" data-id="${p.id}">Excluir</button>
+                    </td>
+                </tr>
+            `).join("");
+
+            if (!lista.length) {
+                tbody.innerHTML = '<tr><td colspan="5">Nenhum pet encontrado.</td></tr>';
+            }
+
+            atualizarResumo();
+        }
+
+        $("btnPesquisarPet").addEventListener("click", () => {
+            renderizarPets($("buscaPet").value);
+            mostrarMensagem("mensagemPet", "Pesquisa de pets concluída.");
+        });
+
+        $("buscaPet").addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                $("btnPesquisarPet").click();
+            }
+        });
+
+        $("formPet").addEventListener("submit", event => {
+            event.preventDefault();
+
+            const id = $("petId").value;
+            const dados = {
+                nome: $("petNome").value.trim(),
+                especie: $("petEspecie").value,
+                raca: $("petRaca").value.trim(),
+                tutor: $("petTutor").value.trim()
+            };
+
+            if (id) {
+                const indice = pets.findIndex(p => p.id === Number(id));
+                if (indice !== -1) pets[indice] = { ...pets[indice], ...dados };
+                mostrarMensagem("mensagemPet", "Pet atualizado!");
+            } else {
+                pets.push({ id: proximoIdPet++, ...dados });
+                mostrarMensagem("mensagemPet", "Pet cadastrado!");
+            }
+
+            $("formPet").reset();
+            $("petId").value = "";
+            $("tituloFormularioPet").textContent = "Cadastrar pet";
+            $("btnCancelarEdicaoPet").hidden = true;
+            renderizarPets($("buscaPet").value);
+        });
+
+        $("tabelaPets").addEventListener("click", event => {
+            const botao = event.target.closest("button[data-acao]");
+            if (!botao) return;
+
+            const pet = pets.find(p => p.id === Number(botao.dataset.id));
+            if (!pet) return;
+
+            if (botao.dataset.acao === "editar-pet") {
+                $("petId").value = pet.id;
+                $("petNome").value = pet.nome;
+                $("petEspecie").value = pet.especie;
+                $("petRaca").value = pet.raca;
+                $("petTutor").value = pet.tutor;
+                $("tituloFormularioPet").textContent = "Editar pet";
+                $("btnCancelarEdicaoPet").hidden = false;
+                $("formPet").scrollIntoView({ behavior: "smooth" });
+            }
+
+            if (botao.dataset.acao === "excluir-pet" &&
+                confirm("Deseja excluir o pet " + pet.nome + "?")) {
+                pets = pets.filter(p => p.id !== pet.id);
+                renderizarPets($("buscaPet").value);
+                mostrarMensagem("mensagemPet", "Pet excluído.");
+            }
+        });
+
+        $("btnCancelarEdicaoPet").addEventListener("click", () => {
+            $("formPet").reset();
+            $("petId").value = "";
+            $("tituloFormularioPet").textContent = "Cadastrar pet";
+            $("btnCancelarEdicaoPet").hidden = true;
+        });
+
+        // USUÁRIOS
+        function renderizarUsuarios(filtro = "") {
+            const tbody = $("tabelaUsuarios");
+            const termo = filtro.toLowerCase();
+
+            const lista = usuarios.filter(u =>
+                [u.nome, u.email, u.telefone, u.tipo].some(valor =>
+                    valor.toLowerCase().includes(termo)
+                )
+            );
+
+            tbody.innerHTML = lista.map(u => `
+                <tr>
+                    <td>${escapar(u.nome)}</td>
+                    <td>${escapar(u.email)}</td>
+                    <td>${escapar(u.telefone)}</td>
+                    <td>${escapar(u.tipo)}</td>
+                    <td>
+                        <button class="secundario" data-acao="editar-usuario" data-id="${u.id}">Editar</button>
+                        <button class="perigo" data-acao="excluir-usuario" data-id="${u.id}">Excluir</button>
+                    </td>
+                </tr>
+            `).join("");
+
+            if (!lista.length) {
+                tbody.innerHTML = '<tr><td colspan="5">Nenhum usuário encontrado.</td></tr>';
+            }
+
+            atualizarResumo();
+        }
+
+        $("btnPesquisarUsuario").addEventListener("click", () => {
+            renderizarUsuarios($("buscaUsuario").value);
+            mostrarMensagem("mensagemUsuario", "Pesquisa de usuários concluída.");
+        });
+
+        $("buscaUsuario").addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                $("btnPesquisarUsuario").click();
+            }
+        });
+
+        $("formUsuario").addEventListener("submit", event => {
+            event.preventDefault();
+
+            const id = $("usuarioId").value;
+            const email = $("usuarioEmail").value.trim().toLowerCase();
+
+            const emailEmUso = usuarios.some(u =>
+                u.email.toLowerCase() === email && u.id !== Number(id)
+            );
+
+            if (emailEmUso) {
+                mostrarMensagem("mensagemUsuario", "Este e-mail já está cadastrado.");
+                return;
+            }
+
+            const dados = {
+                nome: $("usuarioNome").value.trim(),
+                email: $("usuarioEmail").value.trim(),
+                telefone: $("usuarioTelefone").value.trim(),
+                tipo: $("usuarioTipo").value
+            };
+
+            if (id) {
+                const indice = usuarios.findIndex(u => u.id === Number(id));
+                if (indice !== -1) usuarios[indice] = { ...usuarios[indice], ...dados };
+                mostrarMensagem("mensagemUsuario", "Usuário atualizado!");
+            } else {
+                usuarios.push({ id: proximoIdUsuario++, ...dados });
+                mostrarMensagem("mensagemUsuario", "Usuário cadastrado!");
+            }
+
+            $("formUsuario").reset();
+            $("usuarioId").value = "";
+            $("tituloFormularioUsuario").textContent = "Cadastrar usuário";
+            $("btnCancelarEdicaoUsuario").hidden = true;
+            renderizarUsuarios($("buscaUsuario").value);
+        });
+
+        $("tabelaUsuarios").addEventListener("click", event => {
+            const botao = event.target.closest("button[data-acao]");
+            if (!botao) return;
+
+            const usuario = usuarios.find(u => u.id === Number(botao.dataset.id));
+            if (!usuario) return;
+
+            if (botao.dataset.acao === "editar-usuario") {
+                $("usuarioId").value = usuario.id;
+                $("usuarioNome").value = usuario.nome;
+                $("usuarioEmail").value = usuario.email;
+                $("usuarioTelefone").value = usuario.telefone;
+                $("usuarioTipo").value = usuario.tipo;
+                $("tituloFormularioUsuario").textContent = "Editar usuário";
+                $("btnCancelarEdicaoUsuario").hidden = false;
+                $("formUsuario").scrollIntoView({ behavior: "smooth" });
+            }
+
+            if (botao.dataset.acao === "excluir-usuario" &&
+                confirm("Deseja excluir o usuário " + usuario.nome + "?")) {
+                usuarios = usuarios.filter(u => u.id !== usuario.id);
+                renderizarUsuarios($("buscaUsuario").value);
+                mostrarMensagem("mensagemUsuario", "Usuário excluído.");
+            }
+        });
+
+        $("btnCancelarEdicaoUsuario").addEventListener("click", () => {
+            $("formUsuario").reset();
+            $("usuarioId").value = "";
+            $("tituloFormularioUsuario").textContent = "Cadastrar usuário";
+            $("btnCancelarEdicaoUsuario").hidden = true;
+        });
+
+        // CONFIGURAÇÕES
+        $("formConfiguracoes").addEventListener("submit", event => {
+            event.preventDefault();
+
+            diaria = Number($("valorDiaria").value);
+            vagas = Number($("quantidadeVagas").value);
+
+            atualizarResumo();
+
+            mostrarMensagem(
+                "mensagemConfiguracoes",
+                "Configurações atualizadas nesta sessão!"
+            );
+        });
+
+        // Botões de limpar pesquisas
+        document.querySelectorAll("[data-limpar]").forEach(botao => {
+            botao.addEventListener("click", () => {
+                const campo = $(botao.dataset.limpar);
+                campo.value = "";
+
+                if (campo.id === "buscaReserva") renderizarReservas();
+                if (campo.id === "buscaPet") renderizarPets();
+                if (campo.id === "buscaUsuario") renderizarUsuarios();
+            });
+        });
+
+        // Inicialização
+        renderizarReservas();
+        renderizarPets();
+        renderizarUsuarios();
+        atualizarResumo();
+    </script>
+</body>
+</html>
