@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pet - Usuários</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Hotel Pet</h1>
+    <h2>Gerenciamento de Usuários</h2>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="pets.html">Pets</a>
+        <a href="reserva.html">Reservas</a>
+        <a href="configuracoes/configuracoes.html">Configurações</a>
+    </nav>
+
+    <h3>Buscar Usuários</h3>
+
+    <input
+        type="text"
+        id="buscaUsuario"
+        placeholder="Digite o nome do usuário..."
+    >
+
+    <button onclick="buscarUsuarios()">Buscar</button>
+    <button onclick="limparBusca()">Limpar</button>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Função</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabelaUsuarios">
+            <tr>
+                <td>João</td>
+                <td>joao@email.com</td>
+                <td>Cliente</td>
+            </tr>
+            <tr>
+                <td>Maria</td>
+                <td>maria@email.com</td>
+                <td>Funcionário</td>
+            </tr>
+            <tr>
+                <td>Pedro</td>
+                <td>pedro@email.com</td>
+                <td>Gerente</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p id="mensagem"></p>
+
+    <script>
+        function buscarUsuarios() {
+            const busca = document
+                .getElementById("buscaUsuario")
+                .value
+                .toLowerCase()
+                .trim();
+
+            const linhas = document.querySelectorAll("#tabelaUsuarios tr");
+            let encontrados = 0;
+
+            linhas.forEach(function(linha) {
+                const nome = linha.cells[0].textContent.toLowerCase();
+
+                if (nome.includes(busca)) {
+                    linha.style.display = "";
+                    encontrados++;
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+
+            document.getElementById("mensagem").textContent =
+                encontrados > 0
+                    ? encontrados + " usuário(s) encontrado(s)."
+                    : "Nenhum usuário encontrado.";
+        }
+
+        function limparBusca() {
+            document.getElementById("buscaUsuario").value = "";
+
+            document.querySelectorAll("#tabelaUsuarios tr").forEach(function(linha) {
+                linha.style.display = "";
+            });
+
+            document.getElementById("mensagem").textContent = "";
+        }
+    </script>
+
+</body>
+</html>

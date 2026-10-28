@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pet - Reservas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Hotel Pet</h1>
+    <h2>Gerenciamento de Reservas</h2>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="pets.html">Pets</a>
+        <a href="usuarios.html">Usuários</a>
+        <a href="configuracoes/configuracoes.html">Configurações</a>
+    </nav>
+
+    <h3>Buscar Reservas</h3>
+
+    <input
+        type="text"
+        id="buscaReserva"
+        placeholder="Digite o nome do pet..."
+    >
+
+    <button onclick="buscarReservas()">Buscar</button>
+    <button onclick="limparBusca()">Limpar</button>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Pet</th>
+                <th>Cliente</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabelaReservas">
+            <tr>
+                <td>Rex</td>
+                <td>João</td>
+                <td>01/11/2026</td>
+                <td>05/11/2026</td>
+                <td>Confirmada</td>
+            </tr>
+            <tr>
+                <td>Mel</td>
+                <td>Maria</td>
+                <td>03/11/2026</td>
+                <td>07/11/2026</td>
+                <td>Em andamento</td>
+            </tr>
+            <tr>
+                <td>Thor</td>
+                <td>Pedro</td>
+                <td>10/10/2026</td>
+                <td>14/10/2026</td>
+                <td>Finalizada</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p id="mensagem"></p>
+
+    <script>
+        function buscarReservas() {
+            const busca = document
+                .getElementById("buscaReserva")
+                .value
+                .toLowerCase()
+                .trim();
+
+            const linhas = document.querySelectorAll("#tabelaReservas tr");
+            let encontrados = 0;
+
+            linhas.forEach(function(linha) {
+                const pet = linha.cells[0].textContent.toLowerCase();
+
+                if (pet.includes(busca)) {
+                    linha.style.display = "";
+                    encontrados++;
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+
+            document.getElementById("mensagem").textContent =
+                encontrados > 0
+                    ? encontrados + " reserva(s) encontrada(s)."
+                    : "Nenhuma reserva encontrada.";
+        }
+
+        function limparBusca() {
+            document.getElementById("buscaReserva").value = "";
+
+            document.querySelectorAll("#tabelaReservas tr").forEach(function(linha) {
+                linha.style.display = "";
+            });
+
+            document.getElementById("mensagem").textContent = "";
+        }
+    </script>
+
+</body>
+</html>

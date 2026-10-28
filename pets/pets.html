@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pet - Pets</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Hotel Pet</h1>
+    <h2>Gerenciamento de Pets</h2>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="reserva.html">Reservas</a>
+        <a href="usuarios.html">Usuários</a>
+        <a href="configuracoes/configuracoes.html">Configurações</a>
+    </nav>
+
+    <h3>Buscar Pets</h3>
+
+    <input
+        type="text"
+        id="buscaPet"
+        placeholder="Digite o nome do pet..."
+    >
+
+    <button onclick="buscarPets()">Buscar</button>
+    <button onclick="limparBusca()">Limpar</button>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Espécie</th>
+                <th>Tutor</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabelaPets">
+            <tr>
+                <td>Rex</td>
+                <td>Cachorro</td>
+                <td>João</td>
+            </tr>
+            <tr>
+                <td>Mel</td>
+                <td>Cachorro</td>
+                <td>Maria</td>
+            </tr>
+            <tr>
+                <td>Thor</td>
+                <td>Cachorro</td>
+                <td>Pedro</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p id="mensagem"></p>
+
+    <script>
+        function buscarPets() {
+            const busca = document
+                .getElementById("buscaPet")
+                .value
+                .toLowerCase()
+                .trim();
+
+            const linhas = document.querySelectorAll("#tabelaPets tr");
+            let encontrados = 0;
+
+            linhas.forEach(function(linha) {
+                const nome = linha.cells[0].textContent.toLowerCase();
+
+                if (nome.includes(busca)) {
+                    linha.style.display = "";
+                    encontrados++;
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+
+            document.getElementById("mensagem").textContent =
+                encontrados > 0
+                    ? encontrados + " pet(s) encontrado(s)."
+                    : "Nenhum pet encontrado.";
+        }
+
+        function limparBusca() {
+            document.getElementById("buscaPet").value = "";
+
+            document.querySelectorAll("#tabelaPets tr").forEach(function(linha) {
+                linha.style.display = "";
+            });
+
+            document.getElementById("mensagem").textContent = "";
+        }
+    </script>
+
+</body>
+</html>
